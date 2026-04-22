@@ -1,0 +1,219 @@
+/*
+ * WonderBox ESP32 Configuration Template
+ * 
+ * Copy this file to config.h and update with your settings.
+ * DO NOT commit config.h to version control!
+ */
+
+#ifndef CONFIG_H
+#define CONFIG_H
+
+// ============================================================================
+// WiFi Configuration
+// ============================================================================
+
+#define WIFI_SSID "YourWiFiSSID"
+#define WIFI_PASSWORD "YourWiFiPassword"
+#define WIFI_CONNECT_TIMEOUT_MS 15000
+#define WIFI_RECONNECT_INTERVAL_MS 30000
+
+// ============================================================================
+// Backend API Configuration
+// ============================================================================
+
+#define API_BASE_URL "https://api.wonderbox.com"
+#define API_TIMEOUT_MS 30000
+
+// Device authentication
+#define DEVICE_TOKEN "your-device-token-here"
+#define CHILD_ID "your-child-id-here"
+
+// API endpoints
+#define ENDPOINT_SUBMIT "/sticker/submit"
+#define ENDPOINT_STREAM "/sticker/%s/stream"  // %s = job_id
+
+// ============================================================================
+// Hardware Pin Configuration
+// ============================================================================
+
+// I2S Microphone (INMP441 or similar)
+#define I2S_WS_PIN 25        // Word Select (LRCLK)
+#define I2S_SCK_PIN 26       // Serial Clock (BCLK)
+#define I2S_SD_PIN 27        // Serial Data (DOUT)
+#define I2S_PORT I2S_NUM_0
+
+// E-Paper Display (SPI)
+#define EPD_CS_PIN 5
+#define EPD_DC_PIN 17
+#define EPD_RST_PIN 16
+#define EPD_BUSY_PIN 4
+
+// User Interface
+#define BUTTON_PIN 0         // Record button (GPIO0 / BOOT button)
+#define LED_PIN 2           // Status LED (built-in LED)
+
+// ============================================================================
+// Audio Configuration
+// ============================================================================
+
+#define AUDIO_SAMPLE_RATE 16000        // 16kHz (optimal for speech)
+#define AUDIO_BITS_PER_SAMPLE 16       // 16-bit samples
+#define AUDIO_CHANNELS 1               // Mono
+#define AUDIO_BUFFER_SIZE 4096
+#define AUDIO_RECORD_DURATION_MS 5000  // 5 seconds max
+#define AUDIO_DMA_BUF_COUNT 8
+#define AUDIO_DMA_BUF_LEN 1024
+
+// WAV file format settings
+#define AUDIO_OUTPUT_FORMAT "audio/wav"
+
+// ============================================================================
+// Display Configuration
+// ============================================================================
+
+// Display type - uncomment the one you're using
+#define DISPLAY_TYPE_WAVESHARE_7_5_V2  // Waveshare 7.5" V2
+// #define DISPLAY_TYPE_WAVESHARE_4_2    // Waveshare 4.2"
+
+#define DISPLAY_WIDTH 800
+#define DISPLAY_HEIGHT 480
+#define DISPLAY_ROTATION 0  // 0, 1, 2, or 3
+
+// Image rendering
+#define IMAGE_DITHER true   // Apply dithering for better grayscale
+#define IMAGE_QUALITY 85    // JPEG quality (unused for now, for future)
+
+// ============================================================================
+// State Machine Configuration
+// ============================================================================
+
+// State timeouts (milliseconds)
+#define RECORDING_TIMEOUT_MS 10000
+#define UPLOADING_TIMEOUT_MS 15000
+#define PROCESSING_TIMEOUT_MS 120000  // 2 minutes for backend processing
+#define DOWNLOADING_TIMEOUT_MS 30000
+#define RENDERING_TIMEOUT_MS 20000
+
+// Idle timeout before deep sleep
+#define IDLE_SLEEP_TIMEOUT_MS 300000  // 5 minutes
+
+// ============================================================================
+// Error Handling & Retry Configuration
+// ============================================================================
+
+#define MAX_RETRIES 3
+#define RETRY_BACKOFF_BASE_MS 500
+#define RETRY_BACKOFF_MAX_MS 8000
+#define RETRY_BACKOFF_MULTIPLIER 2
+
+// Error recovery
+#define AUTO_RETRY_ON_ERROR true
+#define RETRY_WIFI_ON_DISCONNECT true
+
+// ============================================================================
+// Power Management
+// ============================================================================
+
+#define ENABLE_DEEP_SLEEP false         // Deep sleep when idle
+#define ENABLE_LIGHT_SLEEP true        // Light sleep between operations
+#define DEEP_SLEEP_DURATION_S 3600     // 1 hour
+
+// Wake sources
+#define WAKE_ON_BUTTON true
+#define WAKE_ON_TIMER true
+
+// ============================================================================
+// Logging & Debugging
+// ============================================================================
+
+#define DEBUG_MODE true
+#define SERIAL_BAUD_RATE 115200
+
+// Log levels: 0=None, 1=Error, 2=Warning, 3=Info, 4=Debug, 5=Verbose
+#define LOG_LEVEL 4
+
+#define LOG_HTTP_REQUESTS true
+#define LOG_AUDIO_STATS true
+#define LOG_MEMORY_USAGE true
+
+// ============================================================================
+// OTA Updates
+// ============================================================================
+
+#define ENABLE_OTA false
+#define OTA_PORT 3232
+#define OTA_PASSWORD "wonderbox-ota"
+#define OTA_HOSTNAME "wonderbox-device"
+
+// ============================================================================
+// Safety & Limits
+// ============================================================================
+
+#define MAX_AUDIO_FILE_SIZE (500 * 1024)  // 500KB
+#define MAX_IMAGE_FILE_SIZE (2 * 1024 * 1024)  // 2MB
+#define MIN_FREE_HEAP 50000  // Minimum free heap before operations
+
+// HTTP limits
+#define MAX_HTTP_RESPONSE_SIZE (5 * 1024 * 1024)  // 5MB
+#define HTTP_RECV_BUFFER_SIZE 2048
+
+// ============================================================================
+// Feature Flags
+// ============================================================================
+
+#define FEATURE_AUDIO_CAPTURE true
+#define FEATURE_HTTP_CLIENT true
+#define FEATURE_SSE_STREAMING true
+#define FEATURE_IMAGE_RENDERING true
+#define FEATURE_STATUS_LED true
+#define FEATURE_BUTTON_INPUT true
+
+// ============================================================================
+// Boot / Printing / Processing Audio UX
+// ============================================================================
+
+#define BOOT_ANIMATION_FRAME_COUNT 4
+#define BOOT_ANIMATION_FRAME_DELAY_MS 180
+
+// Printing placeholder pipeline (screen + simulated print duration)
+#define ENABLE_PRINT_PIPELINE true
+#define PRINT_SIMULATED_DURATION_MS 1200
+
+// Printer integration (UART / ESC-POS style thermal printers)
+#define ENABLE_THERMAL_PRINTER true
+#define PRINTER_UART_PORT 2
+#define PRINTER_BAUD_RATE 19200
+#define PRINTER_TX_PIN 33
+#define PRINTER_RX_PIN 32
+#define PRINTER_MAX_WIDTH_DOTS 384
+#define PRINTER_RASTER_CHUNK_HEIGHT 64
+#define PRINTER_LUMA_THRESHOLD 170
+
+// Looping "processing" audio clip from SPIFFS while backend generates image.
+// Add your file to data/processing.wav and upload with: pio run -t uploadfs
+#define ENABLE_PROCESSING_AUDIO true
+#define PROCESSING_AUDIO_CLIP_PATH "/processing.wav"
+#define PROCESSING_AUDIO_CHUNK_SIZE 1024
+#define PROCESSING_AUDIO_I2S_PORT I2S_NUM_1
+
+// Speaker / DAC output pins for processing clip playback
+#define AUDIO_OUT_BCLK_PIN 14
+#define AUDIO_OUT_LRCLK_PIN 12
+#define AUDIO_OUT_DOUT_PIN 13
+
+// ============================================================================
+// Advanced Settings (experts only)
+// ============================================================================
+
+// FreeRTOS task priorities
+#define TASK_PRIORITY_AUDIO 5
+#define TASK_PRIORITY_HTTP 4
+#define TASK_PRIORITY_DISPLAY 3
+#define TASK_PRIORITY_UI 2
+
+// Stack sizes
+#define STACK_SIZE_AUDIO 8192
+#define STACK_SIZE_HTTP 8192
+#define STACK_SIZE_DISPLAY 4096
+
+#endif // CONFIG_H
